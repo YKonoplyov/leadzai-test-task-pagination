@@ -13,25 +13,26 @@ def pagination_list_to_str(pagination_list: list) -> str:
 
 def validate_pagination_args(*pagination_args) -> None:
     current_page, total_pages, boundaries, around = pagination_args
-    if not all([isinstance(pagination_argument, int) for pagination_argument in pagination_args]):
+    if not all(
+        [
+            isinstance(pagination_argument, int)
+            for pagination_argument in pagination_args
+        ]
+    ):
         raise ValueError("All arguments should be integers")
     if total_pages < 1:
         raise ValueError("`total_pages` shoud be > 0")
     if current_page < 1:
-        raise ValueError(
-            f"`current_page`({current_page}) shoud be > 0"
-        )
+        raise ValueError(f"`current_page`({current_page}) shoud be > 0")
     if current_page > total_pages:
-        raise ValueError(
-            "`current_page` should be in range (1, `total_pages`)"
-        )
+        raise ValueError("`current_page` should be in range (1, `total_pages`)")
     if around < 0:
         raise ValueError("Around should be >= 0")
     if boundaries < 0:
         raise ValueError("Boundaries arguments should be >= 0")
 
 
-def generate_left_boundary_and_around(
+def generate_left_boundary_around_current_page(
     around_start: int,
     around_end: int,
     left_boundary_end: int,
@@ -70,6 +71,7 @@ def generate_right_boundary(
 
     return
 
+
 def pagination_generator(
     current_page: int, total_pages: int, boundaries: int, around: int
 ) -> str:
@@ -88,7 +90,7 @@ def pagination_generator(
     left_boundary_end = boundaries if boundaries > 0 else 0
     righ_boundary_start = total_pages - boundaries + 1
 
-    generate_left_boundary_and_around(
+    generate_left_boundary_around_current_page(
         around_start,
         around_end,
         left_boundary_end,
