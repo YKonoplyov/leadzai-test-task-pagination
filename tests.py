@@ -39,6 +39,23 @@ class TestPaginationGeneration(unittest.TestCase):
             [(3, 5, 1, 0), "1 ... 3 ... 5"],
         ]
 
+        cls.no_boundaries_case_list = [
+            [(5, 8, 0, 2), "... 3 4 5 6 7 ..."],
+            [(30, 100, 0, 10), "... 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 ..."],
+            [(10, 15, 0, 1), "... 9 10 11 ..."],
+        ]
+
+        cls.no_around_case_list = [
+            [(5, 8, 1, 0), "1 ... 5 ... 8"],
+            [(12, 26, 3, 0), "1 2 3 ... 12 ... 24 25 26"],
+            [(8, 10, 2, 0), "1 2 ... 8 9 10"],
+        ]
+        cls.around_overlaping_pagination_ends = [
+            [(5, 8, 0, 3), "... 2 3 4 5 6 7 8"],
+            [(12, 26, 0, 12), "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 ..."],
+            [(8, 10, 0, 16), "1 2 3 4 5 6 7 8 9 10"],
+        ]
+    
     def test_all_pages_pagination(self):
         [
             self.assertEqual(pagination_generator(*test_case_args), expectation)
@@ -75,6 +92,21 @@ class TestPaginationGeneration(unittest.TestCase):
             for test_case_args, expectation in self.around_dont_crosses_boundaries_case_list
         ]
 
+    def test_generate_pagination_no_boundaries(self):
+        [
+            self.assertEqual(pagination_generator(*test_case_args), expectation)
+            for test_case_args, expectation in self.no_boundaries_case_list
+        ]
 
+    def test_no_around(self):
+        [
+            self.assertEqual(pagination_generator(*test_case_args), expectation)
+            for test_case_args, expectation in self.no_around_case_list
+        ]        
+    def test_around_overlaps_pagination_ends_no_boundaries(self):
+        [
+            self.assertEqual(pagination_generator(*test_case_args), expectation)
+            for test_case_args, expectation in self.around_overlaping_pagination_ends
+        ]       
 if __name__ == "__main__":
     unittest.main()
