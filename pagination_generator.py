@@ -19,7 +19,7 @@ def validate_pagination_args(*pagination_args) -> None:
             for pagination_argument in pagination_args
         ]
     ):
-        raise ValueError("All arguments should be integers")
+        raise TypeError("All arguments should be integers")
     if total_pages < 1:
         raise ValueError("`total_pages` shoud be > 0")
     if current_page < 1:

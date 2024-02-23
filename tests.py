@@ -78,7 +78,7 @@ class TestPaginationGeneration(unittest.TestCase):
         ]
 
         cls.test_validation_case_list = [
-            [("str object", 10, 3, 4), ValueError, "All arguments should be integers"],
+            [("str object", 10, 3, 4), TypeError, "All arguments should be integers"],
             [(1, 0, 3, 4), ValueError, "`total_pages` shoud be > 0"],
             [(0, 10, 3, 4), ValueError, "`current_page` shoud be > 0"],
             [
