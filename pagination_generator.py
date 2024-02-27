@@ -90,6 +90,12 @@ def pagination_generator(
     left_boundary_end = boundaries if boundaries > 0 else 0
     righ_boundary_start = total_pages - boundaries + 1
 
+    if left_boundary_end + 1 >= righ_boundary_start:
+        pagination_list = range(1, total_pages + 1)
+        pagination_str = pagination_list_to_str(pagination_list)
+        print(pagination_str)
+        return pagination_str
+
     generate_left_boundary_around_current_page(
         around_start,
         around_end,
