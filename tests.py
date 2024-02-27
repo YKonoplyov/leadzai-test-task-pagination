@@ -227,7 +227,7 @@ class TestPaginationGeneration(unittest.TestCase):
             [8, 10, 0, 16, "1 2 3 4 5 6 7 8 9 10"],
         ]
     )
-    def test_around_overlaps_pagination_ends_no_boundaries(
+    def test_around_overlaps_pagination_ends(
         self,
         current_page: int,
         total_pages: int,
@@ -245,6 +245,34 @@ class TestPaginationGeneration(unittest.TestCase):
             expectation
         )
 
+    @test_parametrizer(
+        "current_page,total_pages,boundaries,around,expectation",
+        [
+            [5, 8, 400, 3, "1 2 3 4 5 6 7 8"],
+            [
+                12, 26, 41, 3,
+                "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26",
+            ],
+            [8, 10, 20, 1, "1 2 3 4 5 6 7 8 9 10"],
+        ]
+    )
+    def test_boundaries_overlaps_pagination_ends(
+        self,
+        current_page: int,
+        total_pages: int,
+        boundaries: int,
+        around: int,
+        expectation: str
+    ):
+        self.assertEqual(
+            pagination_generator(
+                current_page,
+                total_pages,
+                boundaries,
+                around
+            ),
+            expectation
+        )
     @test_parametrizer(
         "current_page,total_pages,boundaries,around,expectation",
         [
