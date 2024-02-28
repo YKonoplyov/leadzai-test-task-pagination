@@ -1,4 +1,4 @@
-AROUND_BASE_LEFT_BORDER = 1
+PAGINATION_START = 1
 ELLIPSIS = "..."
 
 
@@ -32,41 +32,66 @@ def validate_pagination_args(*pagination_args) -> None:
         raise ValueError("Boundaries arguments should be >= 0")
 
 
-def generate_left_boundary_around_current_page(
+def generate_left_boundary(
+    left_boundary_end: int,
+    pagination_list: list,
+) -> None:
+
+    if left_boundary_end:
+        pagination_list += range(1, left_boundary_end + 1)
+        return
+
+    return
+
+
+def generate_around_current_page(
     around_start: int,
     around_end: int,
     left_boundary_end: int,
-    right_boundary_start: int,
+    righ_boundary_start: int,
     pagination_list: list,
-) -> list[int, str]:
+) -> None:
 
     if around_end <= left_boundary_end:
-        pagination_list += range(1, left_boundary_end + 1)
         return
 
-    if around_start <= left_boundary_end + 1:
-        pagination_list += range(1, around_end + 1)
+    if around_start - 1 <= left_boundary_end:
+        pagination_list += range(left_boundary_end + 1, around_end + 1)
         return
 
-    if around_start >= right_boundary_start:
-        pagination_list += range(1, left_boundary_end + 1)
-        return
-
-    pagination_list += range(1, left_boundary_end + 1)
     pagination_list.append(ELLIPSIS)
+
+    if around_start >= righ_boundary_start:
+        pagination_list += range(righ_boundary_start, around_end + 1)
+        return
+
+    if around_end + 1 >= righ_boundary_start:
+        pagination_list += range(around_start, around_end + 1)
+        return
+
     pagination_list += range(around_start, around_end + 1)
+
     return
 
 
 def generate_right_boundary(
-    righ_boundary_start: int, total_pages: int, pagination_list: list
-) -> list[int, str]:
+    around_start: int,
+    around_end: int,
+    righ_boundary_start: int,
+    total_pages: int,
+    pagination_list: list,
+) -> None:
 
-    if pagination_list[-1] + 1 >= righ_boundary_start:
-        pagination_list += range(pagination_list[-1] + 1, total_pages + 1)
+    if around_start >= righ_boundary_start:
+        pagination_list += range(around_end + 1, total_pages + 1)
+        return
+
+    if around_end + 1 >= righ_boundary_start:
+        pagination_list += range(around_end + 1, total_pages + 1)
         return
 
     pagination_list.append(ELLIPSIS)
+
     pagination_list += range(righ_boundary_start, total_pages + 1)
 
     return
@@ -81,24 +106,39 @@ def pagination_generator(
 
     around_start = (
         current_page - around
-        if current_page - around >= AROUND_BASE_LEFT_BORDER
-        else AROUND_BASE_LEFT_BORDER
+        if current_page - around >= PAGINATION_START
+        else PAGINATION_START
     )
     around_end = (
         current_page + around if current_page + around <= total_pages else total_pages
     )
+
     left_boundary_end = boundaries if boundaries > 0 else 0
     righ_boundary_start = total_pages - boundaries + 1
 
-    generate_left_boundary_around_current_page(
+    if left_boundary_end + 1 >= righ_boundary_start:
+        pagination_list = range(1, total_pages + 1)
+        pagination_str = pagination_list_to_str(pagination_list)
+        print(pagination_str)
+        return pagination_str
+
+    generate_left_boundary(left_boundary_end, pagination_list)
+
+    generate_around_current_page(
         around_start,
         around_end,
         left_boundary_end,
         righ_boundary_start,
         pagination_list,
     )
-
-    generate_right_boundary(righ_boundary_start, total_pages, pagination_list)
+    
+    generate_right_boundary(
+        around_start,
+        around_end,
+        righ_boundary_start,
+        total_pages,
+        pagination_list,
+    )
 
     pagination_str = pagination_list_to_str(pagination_list)
     print(pagination_str)
