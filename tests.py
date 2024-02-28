@@ -8,6 +8,27 @@ class TestPaginationGeneration(unittest.TestCase):
     @test_parametrizer(
         "current_page,total_pages,boundaries,around,expectation",
         [
+            [1, 1, 1, 1, "1"],
+            [1, 1, 10, 10, "1"],
+            [1, 1, 5, 5, "1"],
+        ],
+    )
+    def test_total_pages_equals_one(
+        self,
+        current_page: int,
+        total_pages: int,
+        boundaries: int,
+        around: int,
+        expectation: str,
+    ):
+        self.assertEqual(
+            pagination_generator(current_page, total_pages, boundaries, around),
+            expectation,
+        )
+
+    @test_parametrizer(
+        "current_page,total_pages,boundaries,around,expectation",
+        [
             [3, 5, 0, 2, "1 2 3 4 5"],
             [1, 10, 5, 0, "1 2 3 4 5 6 7 8 9 10"],
             [7, 9, 3, 4, "1 2 3 4 5 6 7 8 9"],
@@ -182,6 +203,49 @@ class TestPaginationGeneration(unittest.TestCase):
     @test_parametrizer(
         "current_page,total_pages,boundaries,around,expectation",
         [
+            [5, 8, 0, 0, "... 5 ..."],
+            [12, 26, 0, 0, "... 12 ..."],
+            [8, 10, 0, 0, "... 8 ..."],
+        ],
+    )
+    def test_no_around_no_boundaries(
+        self,
+        current_page: int,
+        total_pages: int,
+        boundaries: int,
+        around: int,
+        expectation: str,
+    ):
+        self.assertEqual(
+            pagination_generator(current_page, total_pages, boundaries, around),
+            expectation,
+        )
+
+    @test_parametrizer(
+        "current_page,total_pages,boundaries,around,expectation",
+        [
+            [1, 8, 0, 0, "1 ..."],
+            [26, 26, 0, 0, "... 26"],
+            [1, 10, 0, 0, "1 ..."],
+            [10, 10, 0, 0, "... 10"],
+        ],
+    )
+    def test_no_around_no_boundaries_current_page_is_first_or_last(
+        self,
+        current_page: int,
+        total_pages: int,
+        boundaries: int,
+        around: int,
+        expectation: str,
+    ):
+        self.assertEqual(
+            pagination_generator(current_page, total_pages, boundaries, around),
+            expectation,
+        )
+
+    @test_parametrizer(
+        "current_page,total_pages,boundaries,around,expectation",
+        [
             [5, 8, 0, 3, "... 2 3 4 5 6 7 8"],
             [
                 12,
@@ -220,7 +284,7 @@ class TestPaginationGeneration(unittest.TestCase):
             [8, 10, 20, 1, "1 2 3 4 5 6 7 8 9 10"],
         ],
     )
-    def test_boundaries_overlaps_pagination_ends(
+    def test_boundaries_overlap_pagination_ends(
         self,
         current_page: int,
         total_pages: int,
